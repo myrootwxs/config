@@ -4,56 +4,48 @@
 
 ---
 
+## ⚡ 一键极速恢复（免 Token）
+
+由于本仓库为公开仓库，在**任意新机器/环境**的终端中，无需 GitHub 账号、无需 Token，直接运行以下单行命令即可完成一键安装：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/myrootwxs/config/main/install.sh | bash
+```
+
+> **自动处理内容**：
+> - 自动从 GitHub 下载最新配置并解压部署到 `~/.claude/`；
+> - 自动为状态栏脚本赋予可执行权限；
+> - 自动检测当前环境变量中的 `$ANTHROPIC_AUTH_TOKEN` 并写入配置；
+> - 自动清理临时下载缓存，无残留。
+
+---
+
 ## 目录结构
 
 ```text
 .
 ├── .claude/                    # Claude 核心配置目录
-│   ├── CLAUDE.md               # 全局用户指南与编码规范
+│   ├── CLAUDE.md               # 全局用户指南与通用编码规范
 │   ├── statusline-command.sh   # 终端状态栏显示脚本（模型、思考强度、上下文量/占比、输出速率）
-│   ├── settings.json           # 默认全局配置（权限控制、环境配置、状态栏绑定等）
-│   ├── settings_*.json         # 各模型场景配置预设 (deepseek, cpa, minimax, opg 等)
-│   ├── rules/                  # 全局规则库 (如 context7.md 等)
-│   ├── skills/                 # 通用技能集合 (context7-mcp, find-skills, git-commit, grill-me, i-have-adhd)
+│   ├── settings.json           # 核心全局配置（权限白名单、环境变量映射、状态栏绑定等）
+│   ├── rules/                  # 全局规则库 (如 context7.md)
 │   ├── config.json             # 基础配置项
 │   └── .mcp.json               # MCP 服务器配置
-├── install.sh                  # 一键安装恢复脚本（支持 curl 管道执行与本地执行）
+├── install.sh                  # 一键极速安装恢复脚本（支持 curl 管道直接执行）
 ├── .gitignore                  # 自动排除历史会话、日志、缓存、Hooks、Plugins 与临时数据
-├── README.md                   # 英文/通用说明文档
-└── README_zh.md                # 中文完整指南与使用手册
+├── README.md                   # 英文/通用说明
+└── README_zh.md                # 中文完整指南
 ```
 
 ---
 
-## 在新环境快速恢复
-
-### 方式 1：通过 curl 管道直接执行（推荐）
-
-由于本仓库为私有仓库（Private Repo），在目标设备上执行时需携带访问凭据。根据目标机器的环境，任选一条执行即可：
-
-#### A. 带有 GitHub Token 时（最通用、无交互）
-若机器已配置了 `GITHUB_TOKEN` 环境变量，或手动填入 Token：
-```bash
-curl -fsSL -H "Authorization: token ${GITHUB_TOKEN:-YOUR_GITHUB_TOKEN}" \
-  https://raw.githubusercontent.com/myrootwxs/config/main/install.sh | bash
-```
-
-#### B. 安装并登录了 `gh` CLI
-```bash
-gh api repos/myrootwxs/config/contents/install.sh -H "Accept: application/vnd.github.raw" | bash
-```
-
-> **执行原理说明**：`install.sh` 内置管道检测与临时工作区机制。通过管道执行时，会自动按 `SSH` → `gh CLI` → `API Tarball` → `HTTPS` 的优先级拉取配置、恢复目录与权限，并在安装完成后自动清理临时文件。
-
----
+## 其他恢复方式
 
 ### 方式 2：克隆仓库后执行
 
-在已配置 SSH 密钥的机器上：
-
 ```bash
 cd ~
-git clone git@github.com:myrootwxs/config.git
+git clone https://github.com/myrootwxs/config.git
 cd config
 ./install.sh
 ```
@@ -62,38 +54,33 @@ cd config
 
 ### 方式 3：手动直接提取
 
-由于仓库内已组织好 `.claude/` 目录，克隆后也可直接拷贝对齐路径：
+由于仓库内已组织好 `.claude/` 目录结构，克隆后可直接拷贝至用户根目录：
 
 ```bash
-# 1. 拷贝核心配置到 ~/.claude/
+# 拷贝核心配置到 ~/.claude/
 cp -a ~/config/.claude ~/.claude/
 
-# 2. 赋予状态栏脚本执行权限
+# 赋予状态栏脚本执行权限
 chmod +x ~/.claude/statusline-command.sh
-
-# 3. 恢复 skills 软链接
-mkdir -p ~/.agents
-cp -a ~/.claude/skills ~/.agents/
-ln -sf ~/.agents/skills ~/.claude/skills
 ```
 
 ---
 
 ## Token 与密钥配置说明
 
-为了保证账号安全，仓库已对各 `settings*.json` 中的 `ANTHROPIC_AUTH_TOKEN` 进行了脱敏处理（值为占位符 `YOUR_ANTHROPIC_AUTH_TOKEN`）。
+为了保证账号安全，仓库中 `settings.json` 的 `ANTHROPIC_AUTH_TOKEN` 已脱敏（占位符为 `YOUR_ANTHROPIC_AUTH_TOKEN`）。
 
-在新设备恢复后，请任选一种方式填入您的真实 Token：
+恢复配置后，可通过以下两种方式之一使 Token 生效：
 
 ### 方式一（推荐）：配置环境变量
-在 shell 启动脚本（如 `~/.bashrc`、`~/.zshrc` 或 `~/.config/fish/config.fish`）中添加：
+在终端配置文件（如 `~/.bashrc`、`~/.zshrc` 或 `~/.config/fish/config.fish`）中添加：
 ```bash
 export ANTHROPIC_AUTH_TOKEN="your_actual_anthropic_token"
 ```
 （`install.sh` 脚本在执行时若检测到该环境变量，会自动替换配置中的占位符）
 
 ### 方式二：直接编辑 settings.json
-直接修改 `~/.claude/settings.json`（或对应的 `settings_*.json`），将 `YOUR_ANTHROPIC_AUTH_TOKEN` 替换为真实 Token。
+修改 `~/.claude/settings.json`，将 `YOUR_ANTHROPIC_AUTH_TOKEN` 替换为真实 Token 即可。
 
 ---
 

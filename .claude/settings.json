@@ -50,20 +50,6 @@
     "defaultMode": "default"
   },
   "model": "haiku",
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/root/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  },
   "modelSettings": {
     "gemini-3.8-flash-high": {
       "effortLevel": "high"
@@ -71,7 +57,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash /root/.claude/statusline-command.sh"
+    "command": "bash ~/.claude/statusline-command.sh"
   },
   "tui": "fullscreen",
   "theme": "auto",

@@ -1,7 +1,7 @@
 # 排除目录
 .claude/hooks/
 .claude/plugins/
-.claude/skills/.system/
+.claude/skills/
 
 # 运行时缓存与临时会话数据
 .claude/cache/
