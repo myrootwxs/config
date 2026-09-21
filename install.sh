@@ -22,47 +22,34 @@ mkdir -p "${TARGET_AGENTS}"
 
 # 2. 赋予脚本执行权限
 chmod +x "${SOURCE_CLAUDE}/statusline-command.sh" 2>/dev/null || true
-if [ -d "${SOURCE_CLAUDE}/hooks" ]; then
-    chmod +x "${SOURCE_CLAUDE}/hooks/"* 2>/dev/null || true
-fi
 
 echo "正在同步配置文件到 ${TARGET_CLAUDE} ..."
 
-# 3. 复制核心配置和规则
+# 3. 复制核心配置与规则
 cp -a "${SOURCE_CLAUDE}/CLAUDE.md" "${TARGET_CLAUDE}/"
 cp -a "${SOURCE_CLAUDE}/statusline-command.sh" "${TARGET_CLAUDE}/"
 [ -f "${SOURCE_CLAUDE}/config.json" ] && cp -a "${SOURCE_CLAUDE}/config.json" "${TARGET_CLAUDE}/"
 [ -f "${SOURCE_CLAUDE}/.mcp.json" ] && cp -a "${SOURCE_CLAUDE}/.mcp.json" "${TARGET_CLAUDE}/"
 
-# 复制 rules 和 hooks
+# 复制 rules
 if [ -d "${SOURCE_CLAUDE}/rules" ]; then
     mkdir -p "${TARGET_CLAUDE}/rules"
     cp -a "${SOURCE_CLAUDE}/rules/"* "${TARGET_CLAUDE}/rules/"
 fi
 
-if [ -d "${SOURCE_CLAUDE}/hooks" ]; then
-    mkdir -p "${TARGET_CLAUDE}/hooks"
-    cp -a "${SOURCE_CLAUDE}/hooks/"* "${TARGET_CLAUDE}/hooks/"
-fi
-
-# 复制 plugins 描述文件
-if [ -d "${SOURCE_CLAUDE}/plugins" ]; then
-    mkdir -p "${TARGET_CLAUDE}/plugins"
-    [ -f "${SOURCE_CLAUDE}/plugins/installed_plugins.json" ] && cp -a "${SOURCE_CLAUDE}/plugins/installed_plugins.json" "${TARGET_CLAUDE}/plugins/"
-    [ -f "${SOURCE_CLAUDE}/plugins/known_marketplaces.json" ] && cp -a "${SOURCE_CLAUDE}/plugins/known_marketplaces.json" "${TARGET_CLAUDE}/plugins/"
-fi
-
-# 4. 恢复 skills：同时支持 ~/.claude/skills 和 ~/.agents/skills
+# 4. 恢复通用 skills：同时支持 ~/.claude/skills 和 ~/.agents/skills
 if [ -d "${SOURCE_CLAUDE}/skills" ]; then
-    echo "正在恢复 skills ..."
+    echo "正在恢复通用 skills ..."
     mkdir -p "${TARGET_AGENTS}/skills"
     cp -a "${SOURCE_CLAUDE}/skills/"* "${TARGET_AGENTS}/skills/"
-    # 软链接 ~/.claude/skills -> ~/.agents/skills
-    rm -rf "${TARGET_CLAUDE}/skills"
-    ln -s "${TARGET_AGENTS}/skills" "${TARGET_CLAUDE}/skills"
+    # 建立软链接 ~/.claude/skills -> ~/.agents/skills（若尚未建立）
+    if [ ! -L "${TARGET_CLAUDE}/skills" ]; then
+        rm -rf "${TARGET_CLAUDE}/skills"
+        ln -s "${TARGET_AGENTS}/skills" "${TARGET_CLAUDE}/skills"
+    fi
 fi
 
-# 5. 复制 settings 预设
+# 5. 复制 settings 预设文件
 for f in "${SOURCE_CLAUDE}"/settings*.json; do
     [ -f "$f" ] && cp -a "$f" "${TARGET_CLAUDE}/"
 done
@@ -98,5 +85,5 @@ echo ""
 echo "=========================================="
 echo "配置恢复完成！"
 echo "位置: ${TARGET_CLAUDE}"
-echo "包含: 状态栏脚本, 规则 (rules), 钩子 (hooks), 技能 (skills), 预设配置等"
+echo "包含: 状态栏脚本, 规则 (rules), 通用技能 (skills), 预设配置等"
 echo "=========================================="

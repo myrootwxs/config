@@ -12,13 +12,11 @@
 │   ├── settings.json           # 默认全局配置（权限、环境变量、状态栏绑定等）
 │   ├── settings_*.json         # 各模型场景配置预设 (deepseek, cpa, minimax, opg 等)
 │   ├── rules/                  # 全局规则库 (如 context7.md 等)
-│   ├── hooks/                  # 钩子脚本 (如 cbm-code-discovery-gate 等)
-│   ├── skills/                 # 常用自定义技能集合 (svn-ci, dpi-debug, daily-report 等)
-│   ├── plugins/                # 插件配置描述 (installed_plugins.json)
+│   ├── skills/                 # 常用通用技能集合 (context7-mcp, find-skills, git-commit 等)
 │   ├── config.json             # 基础配置项
 │   └── .mcp.json               # MCP 服务器配置
 ├── install.sh                  # 一键恢复脚本
-├── .gitignore                  # 自动排除历史会话、日志、缓存与临时数据
+├── .gitignore                  # 自动排除历史会话、日志、缓存、Hooks、Plugins 与临时数据
 └── README.md
 ```
 
@@ -36,14 +34,14 @@ cd config
 ```
 
 脚本会自动：
-- 将 `.claude` 中的配置文件复制到 `~/.claude/`
-- 同步自定义 `skills` 到 `~/.agents/skills` 并建立软链接
-- 自动赋予脚本执行权限
+- 将 `.claude` 中的配置文件同步到 `~/.claude/`
+- 同步通用 `skills` 到 `~/.agents/skills` 并建立软链接
+- 自动赋予状态栏脚本执行权限
 - 检查并自动替换 `ANTHROPIC_AUTH_TOKEN`（如环境变量已配置）
 
 ### 方式 2：直接提取使用
 
-由于仓库内已组织好 `.claude/` 目录，克隆后也可以直接将目录同步到根路径：
+由于仓库内已组织好 `.claude/` 目录，克隆后也可以直接将目录同步到用户主目录：
 
 ```bash
 # 拷贝到 ~/.claude/
