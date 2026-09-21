@@ -1,0 +1,18 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/root/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-09-21T07:25:09.589Z"
+  },
+  "zai-coding-plugins": {
+    "source": {
+      "source": "directory",
+      "path": "/root/.nvm/versions/node/v24.13.0/lib/node_modules/@z_ai/coding-helper/zai-coding-plugins"
+    },
+    "installLocation": "/root/.nvm/versions/node/v24.13.0/lib/node_modules/@z_ai/coding-helper/zai-coding-plugins",
+    "lastUpdated": "2026-06-09T05:42:25.269Z"
+  }
+}

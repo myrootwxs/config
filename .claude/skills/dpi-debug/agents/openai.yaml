@@ -1,0 +1,4 @@
+interface:
+  display_name: "DPI 调试验证"
+  short_description: "面向 DPI 模块修改的构建部署发包与输出验证流程"
+  default_prompt: "使用 $dpi-debug 构建、部署并验证当前 DPI 模块修改。"

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "YOUR_ANTHROPIC_AUTH_TOKEN",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gemini-3.8-flash-high",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-flash[1m]",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-5.3-Flash[1m]",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "GLM-5.3[1m]",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "400000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "KillShell",
+      "NotebookEdit",
+      "Read",
+      "TodoWrite",
+      "WebFetch",
+      "WebSearch",
+      "Write",
+      "mcp__web-reader__*",
+      "mcp__web-search-prime__*",
+      "mcp__zai-mcp-server__*",
+      "mcp__zread__*",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git svn:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(make:*)",
+      "Bash(tree:*)",
+      "Bash(jq:*)",
+      "Bash(fd:*)",
+      "Bash(cd sh && ./automake.sh:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  },
+  "model": "haiku",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/root/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "modelSettings": {
+    "gemini-3.8-flash-high": {
+      "effortLevel": "high"
+    }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /root/.claude/statusline-command.sh"
+  },
+  "tui": "fullscreen",
+  "theme": "auto",
+  "verbose": true,
+  "teammateMode": "auto"
+}

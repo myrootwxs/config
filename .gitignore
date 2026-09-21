@@ -1,0 +1,32 @@
+# 运行时缓存与临时会话数据
+.claude/cache/
+.claude/debug/
+.claude/daemon/
+.claude/daemon.*
+.claude/telemetry/
+.claude/backups/
+.claude/sessions/
+.claude/session-env/
+.claude/projects/
+.claude/file-history/
+.claude/paste-cache/
+.claude/shell-snapshots/
+.claude/tasks/
+.claude/teams/
+.claude/ide/
+.claude/.cc-writes/
+.claude/history.jsonl
+.claude/stats-cache.json
+.claude/mcp-needs-auth-cache.json
+.claude/.last*
+.claude/plugins/cache/
+.claude/plugins/data/
+.claude/plugins/marketplaces/
+.claude/plugins/plugin-catalog-cache.json
+.claude/plugins/.last*
+.claude/downloads/
+
+# 常见临时文件
+*.log
+*.tmp
+*.bak
