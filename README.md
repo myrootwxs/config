@@ -15,16 +15,33 @@
 │   ├── skills/                 # 常用通用技能集合 (context7-mcp, find-skills, git-commit 等)
 │   ├── config.json             # 基础配置项
 │   └── .mcp.json               # MCP 服务器配置
-├── install.sh                  # 一键恢复脚本
+├── install.sh                  # 一键安装恢复脚本（支持管道执行与本地执行）
 ├── .gitignore                  # 自动排除历史会话、日志、缓存、Hooks、Plugins 与临时数据
 └── README.md
 ```
 
 ## 在新环境快速恢复
 
-### 方式 1：一键脚本恢复（推荐）
+### 方式 1：通过 curl 管道直接执行（推荐）
 
-在新设备终端中执行：
+本仓库为私有仓库，在目标设备上可根据环境认证方式任选一条命令执行：
+
+#### A. 带有 GitHub Token / 环境变量时（推荐，无交互）：
+```bash
+curl -fsSL -H "Authorization: token ${GITHUB_TOKEN:-YOUR_GITHUB_TOKEN}" \
+  https://raw.githubusercontent.com/myrootwxs/config/main/install.sh | bash
+```
+
+#### B. 安装了 `gh` 客户端时：
+```bash
+gh api repos/myrootwxs/config/contents/install.sh -H "Accept: application/vnd.github.raw" | bash
+```
+
+> **说明**：脚本内置自动拉取逻辑，通过管道执行时会自动从 GitHub 下载配置、部署到 `~/.claude/`，并恢复软链与设置执行权限。
+
+---
+
+### 方式 2：克隆仓库后执行
 
 ```bash
 cd ~
@@ -33,15 +50,11 @@ cd config
 ./install.sh
 ```
 
-脚本会自动：
-- 将 `.claude` 中的配置文件同步到 `~/.claude/`
-- 同步通用 `skills` 到 `~/.agents/skills` 并建立软链接
-- 自动赋予状态栏脚本执行权限
-- 检查并自动替换 `ANTHROPIC_AUTH_TOKEN`（如环境变量已配置）
+---
 
-### 方式 2：直接提取使用
+### 方式 3：直接提取使用
 
-由于仓库内已组织好 `.claude/` 目录，克隆后也可以直接将目录同步到用户主目录：
+由于仓库内已组织好 `.claude/` 目录，克隆后也可直接拷贝：
 
 ```bash
 # 拷贝到 ~/.claude/
