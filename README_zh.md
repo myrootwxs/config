@@ -89,9 +89,10 @@ export ANTHROPIC_AUTH_TOKEN="your_actual_anthropic_token"
 配置中包含的状态栏脚本（`statusline-command.sh`）展示效果如下：
 
 ```text
-deepseek-flash[1m] │ effort:xhigh │ ctx 186.0k/400.0k │ 47% │ 82.3 tok/s
+~/dpi20_ice │ deepseek-flash[1m] │ effort:xhigh │ ctx 186.0k/400.0k │ 47% │ 82.3 tok/s
 ```
 
+- **当前工作路径**：显示当前所在目录，用户 HOME 路径自动简写为 `~`
 - **当前模型**：显示运行模型名称
 - **思考强度**：显示思考级别（如 `effort:xhigh`、`effort:medium`），不支持时回退显示思考开关状态
 - **上下文使用量**：格式化展示当前已用量与窗口总上限（如 `186.0k/400.0k`）

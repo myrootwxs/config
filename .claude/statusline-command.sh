@@ -1,15 +1,16 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
 # 状态栏脚本
-# 显示：模型 | 思考强度 | 上下文使用量 | 上下文窗口占比 | 模型输出速度
+# 显示：当前工作路径 | 模型 | 思考强度 | 上下文使用量 | 上下文窗口占比 | 模型输出速度
 # 输入：stdin 传入的会话 JSON，输出速度由 transcript_path 会话记录推算
 # ---------------------------------------------------------------------------
 
 # Catppuccin Mocha 配色（状态栏以暗色渲染，故取亮色相）
 C_RESET=$'\033[0m'
 C_DIM=$'\033[2m'
-C_MODEL=$'\033[38;2;180;190;254m'  # lavender
-C_EFFORT=$'\033[38;2;203;166;247m' # mauve
+C_PATH=$'\033[38;2;250;179;135m'   # peach (路径)
+C_MODEL=$'\033[38;2;180;190;254m'  # lavender (模型)
+C_EFFORT=$'\033[38;2;203;166;247m' # mauve (思考)
 C_OK=$'\033[38;2;166;227;161m'     # green
 C_WARN=$'\033[38;2;249;226;175m'   # yellow
 C_BAD=$'\033[38;2;243;139;168m'    # red
@@ -28,7 +29,8 @@ mapfile -t f < <(
         (.context_window.total_input_tokens // "" | tostring),
         (.context_window.used_percentage // "" | tostring),
         (.context_window.context_window_size // "" | tostring),
-        (.transcript_path // "")
+        (.transcript_path // ""),
+        (.cwd // .workspace.current_dir // "")
     ] | .[]' 2>/dev/null
 )
 
@@ -39,7 +41,22 @@ used=${f[3]:-}
 pct=${f[4]:-}
 size=${f[5]:-}
 transcript=${f[6]:-}
+raw_cwd=${f[7]:-}
 model=${model:-"?"}
+
+# ---------- 当前工作路径（HOME 替换为 ~） ----------
+target_dir="${raw_cwd:-$PWD}"
+if [ -n "$HOME" ]; then
+    if [ "$target_dir" = "$HOME" ]; then
+        display_dir="~"
+    elif [[ "$target_dir" == "$HOME/"* ]]; then
+        display_dir="~${target_dir#$HOME}"
+    else
+        display_dir="$target_dir"
+    fi
+else
+    display_dir="$target_dir"
+fi
 
 # ---------- 输出速度 ----------
 # 取最近一条 assistant 消息的 output_tokens，除以「它之前最近一条记录 → 该消息」的
@@ -90,10 +107,15 @@ add_part() { # 以暗色竖线拼接各显示段
     line="$line$1"
 }
 
-# 1. 当前模型
+# 1. 当前工作路径
+if [ -n "$display_dir" ]; then
+    add_part "${C_PATH}${display_dir}${C_RESET}"
+fi
+
+# 2. 当前模型
 add_part "${C_MODEL}${model}${C_RESET}"
 
-# 2. 思考强度（无 effort 字段时退化为 thinking 开关状态）
+# 3. 思考强度（无 effort 字段时退化为 thinking 开关状态）
 if [ -n "$effort" ]; then
     add_part "${C_EFFORT}effort:${effort}${C_RESET}"
 elif [ "$thinking" = "true" ]; then
@@ -102,7 +124,7 @@ else
     add_part "${C_EFFORT}think:off${C_RESET}"
 fi
 
-# 3. 上下文使用量
+# 4. 上下文使用量
 if [ -n "$used" ]; then
     if [ -n "$size" ]; then
         add_part "${C_CTX}ctx $(num_fmt "$used")/$(num_fmt "$size")${C_RESET}"
@@ -111,7 +133,7 @@ if [ -n "$used" ]; then
     fi
 fi
 
-# 4. 上下文窗口占比（越高越危险：<50 绿、<80 黄、>=80 红）
+# 5. 上下文窗口占比（越高越危险：<50 绿、<80 黄、>=80 红）
 if [ -n "$pct" ]; then
     pct_int=$(printf '%.0f' "$pct" 2>/dev/null)
     if [ -n "$pct_int" ]; then
@@ -126,7 +148,7 @@ if [ -n "$pct" ]; then
     fi
 fi
 
-# 5. 模型输出速度
+# 6. 模型输出速度
 if [ -n "$speed" ]; then
     add_part "${C_SPEED}$(printf '%.1f' "$speed" 2>/dev/null) tok/s${C_RESET}"
 else
